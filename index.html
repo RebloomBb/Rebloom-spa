@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rebloom Spa &amp; Wellness</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream: #EFE5CE;
+    --cream-deep: #E3D3AE;
+    --sage: #6B7549;
+    --sage-dark: #3A3C22;
+    --terracotta: #A3552B;
+    --terracotta-light: #C98A4B;
+    --plum: #6E4459;
+    --ink: #2B2115;
+    --ink-soft: #5E4E3B;
+    --line: rgba(43,33,21,0.16);
+  }
+
+  *{ box-sizing: border-box; margin:0; padding:0; }
+
+  html{ scroll-behavior: smooth; }
+
+  body{
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  a{ color: inherit; text-decoration: none; }
+
+  h1,h2,h3,.display{
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    color: var(--sage-dark);
+    letter-spacing: 0.01em;
+  }
+
+  .eyebrow{
+    font-family: 'Jost', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--sage-dark);
+    font-weight: 500;
+  }
+
+  :focus-visible{
+    outline: 2px solid var(--terracotta);
+    outline-offset: 3px;
+  }
+
+  /* ---------- NAV ---------- */
+  header{
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.6rem 6vw;
+    background: rgba(246,241,231,0.88);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+    transition: padding 0.3s ease;
+  }
+
+  .logo{
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.5rem;
+    color: var(--sage-dark);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .logo svg{ width: 22px; height: 22px; }
+
+  nav ul{
+    display: flex;
+    gap: 2.4rem;
+    list-style: none;
+  }
+  nav a{
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    position: relative;
+    padding-bottom: 4px;
+  }
+  nav a::after{
+    content: '';
+    position: absolute;
+    left: 0; bottom: 0;
+    width: 0%; height: 1px;
+    background: var(--sage-dark);
+    transition: width 0.35s ease;
+  }
+  nav a:hover::after, nav a:focus-visible::after{ width: 100%; }
+
+  .nav-cta{
+    border: 1px solid var(--sage-dark);
+    padding: 0.55rem 1.4rem;
+    border-radius: 2px;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+  .nav-cta:hover{ background: var(--sage-dark); color: var(--cream); }
+
+  .menu-toggle{ display:none; background:none; border:none; cursor:pointer; }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    align-items: center;
+    min-height: 100vh;
+    padding: 8rem 6vw 4rem;
+    gap: 2rem;
+  }
+
+  .hero-copy .eyebrow{ margin-bottom: 1.1rem; display:block; }
+
+  .hero-copy h1{
+    font-size: clamp(3rem, 6vw, 5.2rem);
+    line-height: 1.02;
+    margin-bottom: 1.6rem;
+  }
+  .hero-copy h1 em{
+    font-style: italic;
+    color: var(--sage);
+  }
+
+  .hero-copy p{
+    max-width: 34ch;
+    color: var(--ink-soft);
+    font-size: 1.05rem;
+    margin-bottom: 2.2rem;
+  }
+
+  .hero-actions{ display:flex; gap: 1rem; align-items:center; flex-wrap: wrap; }
+
+  .btn-primary{
+    background: var(--sage-dark);
+    color: var(--cream);
+    padding: 0.95rem 2.2rem;
+    border-radius: 2px;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: inline-block;
+    transition: transform 0.3s ease, background 0.3s ease;
+  }
+  .btn-primary:hover{ background: var(--terracotta); transform: translateY(-2px); }
+
+  .btn-ghost{
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 3px;
+    transition: border-color 0.3s ease, color 0.3s ease;
+  }
+  .btn-ghost:hover{ color: var(--sage-dark); border-color: var(--sage-dark); }
+
+  /* signature bloom illustration */
+  .bloom-wrap{
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .bloom-wrap svg{ width: min(100%, 420px); height: auto; overflow: visible; }
+
+  .bloom-path{
+    fill: none;
+    stroke: var(--sage-dark);
+    stroke-width: 1.3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 200;
+    stroke-dashoffset: 200;
+    animation: draw 1.6s ease forwards;
+  }
+  .bloom-path.alt{ stroke: var(--sage); }
+  .bloom-path.stem{ stroke-dasharray: 80; stroke-dashoffset: 80; }
+  .bloom-stamen{
+    fill: none;
+    stroke: var(--plum);
+    stroke-width: 1;
+    stroke-linecap: round;
+    stroke-dasharray: 50;
+    stroke-dashoffset: 50;
+    animation: draw 1s ease forwards;
+  }
+  .bloom-anther{
+    fill: var(--plum);
+    opacity: 0;
+    animation: fadeCenter 0.6s ease forwards;
+  }
+  .bloom-center{
+    fill: var(--plum);
+    opacity: 0;
+    animation: fadeCenter 1.2s ease forwards 2.4s;
+  }
+  @keyframes draw{ to{ stroke-dashoffset: 0; } }
+  @keyframes fadeCenter{ to{ opacity: 1; } }
+
+  @media (prefers-reduced-motion: reduce){
+    .bloom-path, .bloom-stamen{ animation: none; stroke-dashoffset: 0; }
+    .bloom-center, .bloom-anther{ animation: none; opacity: 1; }
+    html{ scroll-behavior: auto; }
+  }
+
+  /* ---------- SECTION shared ---------- */
+  section{ padding: 7rem 6vw; }
+  .section-head{ max-width: 46ch; margin-bottom: 3.5rem; }
+  .section-head .eyebrow{ margin-bottom: 0.8rem; display:block; }
+  .section-head h2{ font-size: clamp(2.1rem, 3.4vw, 3rem); }
+
+  .reveal{
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.is-visible{ opacity: 1; transform: translateY(0); }
+
+  /* divider vine */
+  .vine{
+    display:block;
+    width: 100%;
+    max-width: 220px;
+    height: 20px;
+    margin: 0 auto;
+    opacity: 0.55;
+  }
+
+  /* ---------- SERVICES ---------- */
+  .services{ background: var(--cream-deep); }
+  .service-grid{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  .service-card{
+    background: var(--cream-deep);
+    padding: 2.6rem 2.2rem;
+    transition: background 0.35s ease;
+  }
+  .service-card:hover{ background: var(--cream); }
+  .service-card .num{
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--sage);
+    font-size: 0.95rem;
+    margin-bottom: 1.2rem;
+    display: block;
+  }
+  .service-card h3{ font-size: 1.5rem; margin-bottom: 0.8rem; }
+  .service-card p{ color: var(--ink-soft); font-size: 0.94rem; margin-bottom: 1.4rem; }
+  .service-card .price{
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sage-dark);
+  }
+
+  /* ---------- PHILOSOPHY ---------- */
+  .philosophy{
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+  .philosophy-mark{
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(2.6rem, 5vw, 4rem);
+    color: var(--sage-dark);
+    line-height: 1.15;
+    border-left: 2px solid var(--terracotta);
+    padding-left: 2rem;
+  }
+  .philosophy-text p{
+    color: var(--ink-soft);
+    margin-bottom: 1.3rem;
+    max-width: 52ch;
+  }
+  .philosophy-text p:first-child{
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--ink);
+    font-size: 1.25rem;
+  }
+
+  /* ---------- CTA BANNER ---------- */
+  .cta-banner{
+    background: var(--sage-dark);
+    color: var(--cream);
+    text-align: center;
+    position: relative;
+  }
+  .cta-banner h2{ color: var(--cream); font-size: clamp(2.2rem, 4.5vw, 3.4rem); margin-bottom: 1.4rem; }
+  .cta-banner p{ color: rgba(246,241,231,0.75); max-width: 44ch; margin: 0 auto 2.2rem; }
+  .cta-banner .btn-primary{ background: var(--terracotta); }
+  .cta-banner .btn-primary:hover{ background: var(--terracotta-light); color: var(--sage-dark); }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    padding: 4.5rem 6vw 2.5rem;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr 1fr;
+    gap: 2rem;
+    border-top: 1px solid var(--line);
+  }
+  footer .logo{ margin-bottom: 1rem; }
+  footer p{ color: var(--ink-soft); font-size: 0.9rem; max-width: 30ch; }
+  footer h4{
+    font-family: 'Jost', sans-serif;
+    font-size: 0.76rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--sage-dark);
+    margin-bottom: 1rem;
+    font-weight: 500;
+  }
+  footer ul{ list-style:none; }
+  footer li{ margin-bottom: 0.6rem; }
+  footer a, footer address{ color: var(--ink-soft); font-size: 0.92rem; font-style: normal; }
+  footer a:hover{ color: var(--terracotta); }
+  .foot-bottom{
+    grid-column: 1 / -1;
+    margin-top: 2.5rem;
+    padding-top: 1.6rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 900px){
+    nav ul, .nav-cta{ display: none; }
+    .menu-toggle{ display: block; }
+    .hero{ grid-template-columns: 1fr; text-align: center; padding-top: 7.5rem; }
+    .hero-copy p{ margin-left:auto; margin-right:auto; }
+    .hero-actions{ justify-content: center; }
+    .bloom-wrap{ order: -1; margin-bottom: 1rem; }
+    .service-grid{ grid-template-columns: 1fr; }
+    .philosophy{ grid-template-columns: 1fr; }
+    .philosophy-mark{ border-left:none; border-top: 2px solid var(--terracotta); padding-left:0; padding-top:1.2rem; }
+    footer{ grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="#" class="logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
+      <path d="M12 3c1.5 2 1.5 5 0 7-1.5-2-1.5-5 0-7z"/>
+      <path d="M12 3c-2 1.5-5 1.5-7 0 1.5-2 5-2 7 0z" transform="rotate(120 12 12)"/>
+      <path d="M12 3c-2 1.5-5 1.5-7 0 1.5-2 5-2 7 0z" transform="rotate(240 12 12)"/>
+    </svg>
+    Rebloom
+  </a>
+  <nav>
+    <ul>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#philosophy">Philosophy</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+  <a href="booking.html" class="nav-cta">Book Now</a>
+  <button class="menu-toggle" aria-label="Menu">☰</button>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-copy">
+      <span class="eyebrow">Massage &amp; Spa · Kingston</span>
+      <h1>Every visit,<br>a chance to <em>bloom</em> again.</h1>
+      <p>Rebloom Spa &amp; Wellness is a quiet return to yourself — therapeutic massage, considered rituals, and space to soften.</p>
+      <div class="hero-actions">
+        <a href="booking.html" class="btn-primary">Reserve a Session</a>
+        <a href="#services" class="btn-ghost">View Treatments</a>
+      </div>
+    </div>
+    <div class="bloom-wrap" aria-hidden="true">
+      <svg viewBox="0 0 200 200">
+        <path class="bloom-path stem" d="M100,100 L100,178" style="animation-delay:1.5s"/>
+
+        <path class="bloom-path" transform="rotate(0 100 100)" d="M100,100 C91,72 91,32 100,14 C109,32 109,72 100,100 Z" style="animation-delay:0s"/>
+        <path class="bloom-path alt" transform="rotate(60 100 100)" d="M100,100 C91,72 91,32 100,14 C109,32 109,72 100,100 Z" style="animation-delay:0.15s"/>
+        <path class="bloom-path" transform="rotate(120 100 100)" d="M100,100 C91,72 91,32 100,14 C109,32 109,72 100,100 Z" style="animation-delay:0.3s"/>
+        <path class="bloom-path alt" transform="rotate(180 100 100)" d="M100,100 C91,72 91,32 100,14 C109,32 109,72 100,100 Z" style="animation-delay:0.45s"/>
+        <path class="bloom-path" transform="rotate(240 100 100)" d="M100,100 C91,72 91,32 100,14 C109,32 109,72 100,100 Z" style="animation-delay:0.6s"/>
+        <path class="bloom-path alt" transform="rotate(300 100 100)" d="M100,100 C91,72 91,32 100,14 C109,32 109,72 100,100 Z" style="animation-delay:0.75s"/>
+
+        <path class="bloom-stamen" transform="rotate(25 100 100)" d="M100,100 L100,52" style="animation-delay:1s"/>
+        <path class="bloom-stamen" transform="rotate(95 100 100)" d="M100,100 L100,52" style="animation-delay:1.1s"/>
+        <path class="bloom-stamen" transform="rotate(165 100 100)" d="M100,100 L100,52" style="animation-delay:1.2s"/>
+        <path class="bloom-stamen" transform="rotate(235 100 100)" d="M100,100 L100,52" style="animation-delay:1.3s"/>
+        <path class="bloom-stamen" transform="rotate(305 100 100)" d="M100,100 L100,52" style="animation-delay:1.4s"/>
+
+        <ellipse class="bloom-anther" transform="rotate(25 100 100)" cx="100" cy="50" rx="2.6" ry="4.6" style="animation-delay:1.7s"/>
+        <ellipse class="bloom-anther" transform="rotate(95 100 100)" cx="100" cy="50" rx="2.6" ry="4.6" style="animation-delay:1.8s"/>
+        <ellipse class="bloom-anther" transform="rotate(165 100 100)" cx="100" cy="50" rx="2.6" ry="4.6" style="animation-delay:1.9s"/>
+        <ellipse class="bloom-anther" transform="rotate(235 100 100)" cx="100" cy="50" rx="2.6" ry="4.6" style="animation-delay:2s"/>
+        <ellipse class="bloom-anther" transform="rotate(305 100 100)" cx="100" cy="50" rx="2.6" ry="4.6" style="animation-delay:2.1s"/>
+
+        <circle class="bloom-center" cx="100" cy="100" r="4.5" style="animation-delay:2.3s"/>
+      </svg>
+    </div>
+  </section>
+
+  <section class="services reveal" id="services">
+    <div class="section-head">
+      <span class="eyebrow">Treatments</span>
+      <h2>Rituals for a full return to ease</h2>
+    </div>
+    <div class="service-grid">
+      <div class="service-card">
+        <span class="num">01</span>
+        <h3>Swedish Renewal</h3>
+        <p>Long, grounding strokes to release tension and slow the breath. Our most-loved first visit.</p>
+        <span class="price">60 / 90 min</span>
+      </div>
+      <div class="service-card">
+        <span class="num">02</span>
+        <h3>Deep Tissue Reset</h3>
+        <p>Focused pressure for chronic tightness through the back, shoulders, and neck.</p>
+        <span class="price">60 / 90 min</span>
+      </div>
+      <div class="service-card">
+        <span class="num">03</span>
+        <h3>Hot Stone Bloom</h3>
+        <p>Warmed basalt stones melt tension layer by layer, paired with aromatic oils.</p>
+        <span class="price">75 / 105 min</span>
+      </div>
+      <div class="service-card">
+        <span class="num">04</span>
+        <h3>Prenatal Care</h3>
+        <p>A gentle, supported treatment designed for comfort at every stage.</p>
+        <span class="price">60 min</span>
+      </div>
+      <div class="service-card">
+        <span class="num">05</span>
+        <h3>Aromatherapy Facial</h3>
+        <p>A slow facial ritual using botanical oils suited to your skin's needs.</p>
+        <span class="price">50 min</span>
+      </div>
+      <div class="service-card">
+        <span class="num">06</span>
+        <h3>Couples Retreat</h3>
+        <p>Side-by-side massage in our shared treatment room, finished with tea.</p>
+        <span class="price">90 min</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="philosophy reveal" id="philosophy">
+    <p class="philosophy-mark">"To bloom once is chance. To bloom again is care."</p>
+    <div class="philosophy-text">
+      <p>Rebloom was built on a simple idea — that rest isn't a luxury you earn, it's a practice you return to, again and again.</p>
+      <p>Every treatment is paced to your body, not the clock. Our therapists are trained across modalities so your session can shift with what you need that day, not what's on the menu.</p>
+      <p>We work with a small number of clients each week by design, so every visit feels considered rather than processed.</p>
+    </div>
+  </section>
+
+  <section class="cta-banner reveal" id="contact">
+    <h2>Ready to soften?</h2>
+    <p>Reserve your session and step into a space made for slowing down.</p>
+    <a href="booking.html" class="btn-primary">Book Your Visit</a>
+  </section>
+</main>
+
+<footer>
+  <div>
+    <a href="#" class="logo">Rebloom</a>
+    <p>Massage &amp; spa therapy for a considered return to rest, based in Kingston, Jamaica.</p>
+  </div>
+  <div>
+    <h4>Visit</h4>
+    <ul>
+      <li><a href="#services">Treatments</a></li>
+      <li><a href="booking.html">Book a Session</a></li>
+      <li><a href="terms.html">Terms &amp; Policies</a></li>
+    </ul>
+  </div>
+  <div>
+    <h4>Hours</h4>
+    <ul>
+      <li><address>Tue – Sat, 9am – 6pm</address></li>
+      <li><address>Sun – Mon, Closed</address></li>
+    </ul>
+  </div>
+  <div>
+    <h4>Connect</h4>
+    <ul>
+      <li><a href="https://instagram.com" target="_blank" rel="noopener">@rebloom.spa.ja</a></li>
+      <li><a href="mailto:hello@rebloomwellness.com">hello@rebloomwellness.com</a></li>
+    </ul>
+  </div>
+  <div class="foot-bottom">
+    <span>© 2026 Rebloom Spa &amp; Wellness</span>
+    <span>Kingston, Jamaica</span>
+  </div>
+</footer>
+
+<script>
+  // scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        e.target.classList.add('is-visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
