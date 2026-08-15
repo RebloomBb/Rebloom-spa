@@ -102,7 +102,31 @@
     background: var(--sage-dark);
     color: var(--cream);
   }
-  .menu-toggle{ display:none; background:none; border:none; cursor:pointer; }
+  .menu-toggle{ display:none; background:none; border:none; cursor:pointer; font-size:1.4rem; color:var(--sage-dark); }
+
+  .mobile-menu{
+    display: none;
+    position: fixed;
+    top: 68px;
+    left: 0; right: 0;
+    z-index: 99;
+    background: var(--cream);
+    border-bottom: 1px solid var(--line);
+    padding: 1.4rem 6vw 1.8rem;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+  .mobile-menu.open{ display: flex; }
+  .mobile-menu a{
+    font-size: 0.95rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .mobile-menu a.mobile-cta{
+    color: var(--sage-dark);
+    font-weight: 500;
+  }
 
   /* ---------- PAGE HERO ---------- */
   .page-hero{ padding: 10rem 6vw 3rem; max-width: 760px; }
@@ -110,6 +134,16 @@
   .page-hero h1{ font-size: clamp(2.6rem, 5vw, 4rem); line-height: 1.05; margin-bottom: 1.2rem; }
   .page-hero p{ color: var(--ink-soft); max-width: 56ch; }
   .page-hero a{ color: var(--sage-dark); border-bottom: 1px solid var(--sage-dark); }
+
+  .note-box{
+    background: var(--cream-deep);
+    border-left: 2px solid var(--sage);
+    padding: 1.2rem 1.5rem;
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+    max-width: 56ch;
+  }
+  .note-box strong{ color: var(--sage-dark); }
 
   /* ---------- FORM LAYOUT ---------- */
   .form-wrap{ padding: 1rem 6vw 6rem; }
@@ -271,14 +305,24 @@
     </ul>
   </nav>
   <a href="booking.html" class="nav-cta">Book Now</a>
-  <button class="menu-toggle" aria-label="Menu">☰</button>
+  <button class="menu-toggle" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu">☰</button>
 </header>
+
+<div class="mobile-menu" id="mobile-menu">
+  <a href="index.html#services">Services</a>
+  <a href="index.html#philosophy">Philosophy</a>
+  <a href="terms.html">Terms</a>
+  <a href="booking.html" class="mobile-cta">Book Now</a>
+</div>
 
 <main>
   <section class="page-hero">
     <span class="eyebrow">Book Your Session</span>
     <h1>Reserve your time to reset.</h1>
     <p>Choose your treatment, share a little about yourself, and secure your spot with a deposit. Full details are in our <a href="terms.html">terms &amp; policies</a>.</p>
+    <div class="note-box" style="margin-top:1.6rem;">
+      <strong>Currently open by appointment on Sundays only</strong>, 10am – 5pm. Bookings — and deposits — must be made at least one week in advance. No same-day bookings.
+    </div>
   </section>
 
   <div class="form-wrap">
@@ -301,19 +345,20 @@
 
         <div class="field-row">
           <div class="field">
-            <label for="date">Preferred Date</label>
-            <input type="date" id="date" name="date" required>
+            <label for="date">Preferred Sunday</label>
+            <select id="date" name="date" required>
+              <option value="" disabled selected>Select a Sunday</option>
+            </select>
           </div>
           <div class="field">
             <label for="time">Preferred Time</label>
             <select id="time" name="time" required>
               <option value="" disabled selected>Select a time</option>
-              <option>9:00 AM</option>
-              <option>10:30 AM</option>
-              <option>12:00 PM</option>
-              <option>1:30 PM</option>
-              <option>3:00 PM</option>
-              <option>4:30 PM</option>
+              <option>10:00 AM</option>
+              <option>11:30 AM</option>
+              <option>1:00 PM</option>
+              <option>2:30 PM</option>
+              <option>4:00 PM</option>
             </select>
           </div>
         </div>
@@ -386,7 +431,7 @@
 
 <footer>
   <div>
-    <a href="index.html" class="logo">Rebloom</a>
+    <a href="index.html" class="logo">Rebloom Spa &amp; Wellness</a>
     <p>Massage &amp; spa therapy for a considered return to rest, based in Kingston, Jamaica.</p>
   </div>
   <div>
@@ -400,8 +445,8 @@
   <div>
     <h4>Hours</h4>
     <ul>
-      <li><address>Tue – Sat, 9am – 6pm</address></li>
-      <li><address>Sun – Mon, Closed</address></li>
+      <li><address>Sun, 10am – 5pm</address></li>
+      <li><address>Mon – Sat, Closed</address></li>
     </ul>
   </div>
   <div>
@@ -416,6 +461,49 @@
     <span>Kingston, Jamaica</span>
   </div>
 </footer>
+
+<script>
+  // populate Sunday-only date select, minimum 7 days out
+  const dateSelect = document.getElementById('date');
+  const MIN_DAYS_OUT = 7;
+  const WEEKS_TO_SHOW = 10;
+
+  let earliest = new Date();
+  earliest.setHours(0,0,0,0);
+  earliest.setDate(earliest.getDate() + MIN_DAYS_OUT);
+
+  let firstSunday = new Date(earliest);
+  while (firstSunday.getDay() !== 0) {
+    firstSunday.setDate(firstSunday.getDate() + 1);
+  }
+
+  const fmt = new Intl.DateTimeFormat('en-JM', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
+  for (let i = 0; i < WEEKS_TO_SHOW; i++) {
+    const d = new Date(firstSunday);
+    d.setDate(d.getDate() + (i * 7));
+    const opt = document.createElement('option');
+    opt.value = d.toISOString().slice(0,10);
+    opt.textContent = fmt.format(d);
+    dateSelect.appendChild(opt);
+  }
+
+  // mobile menu toggle
+  const menuToggle = document.querySelector('.menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+  menuToggle.addEventListener('click', () => {
+    const open = mobileMenu.classList.toggle('open');
+    menuToggle.setAttribute('aria-expanded', open);
+    menuToggle.textContent = open ? '✕' : '☰';
+  });
+  mobileMenu.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      mobileMenu.classList.remove('open');
+      menuToggle.setAttribute('aria-expanded', 'false');
+      menuToggle.textContent = '☰';
+    });
+  });
+</script>
 
 </body>
 </html>
