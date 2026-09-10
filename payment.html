@@ -8,16 +8,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --cream: #EFE5CE;
-    --cream-deep: #E3D3AE;
-    --sage: #6B7549;
-    --sage-dark: #3A3C22;
-    --terracotta: #A3552B;
-    --terracotta-light: #C98A4B;
-    --plum: #6E4459;
-    --ink: #2B2115;
-    --ink-soft: #5E4E3B;
-    --line: rgba(43,33,21,0.16);
+    --cream: #FBEDD9;
+    --cream-deep: #F1D9AC;
+    --sage: #9C6C88;
+    --sage-dark: #6E3B5E;
+    --terracotta: #E8A33D;
+    --terracotta-light: #F0BD6E;
+    --plum: #4A1F3D;
+    --ink: #3B2412;
+    --ink-soft: #6B4B28;
+    --line: rgba(59,36,18,0.16);
   }
 
   *{ box-sizing: border-box; margin:0; padding:0; }
@@ -309,9 +309,10 @@
   </section>
 
   <div class="summary">
-    <div><span class="label">Deposit Due</span><span class="value">50% of Treatment Price</span></div>
-    <div><span class="label">Reference</span><span class="value">Your Full Name</span></div>
-    <div><span class="label">Balance</span><span class="value">Due at Session</span></div>
+    <div><span class="label">Treatment</span><span class="value" id="summary-treatment">—</span></div>
+    <div><span class="label">Deposit Due</span><span class="value" id="summary-deposit">—</span></div>
+    <div><span class="label">Reference</span><span class="value" id="summary-name">Your Full Name</span></div>
+    <div><span class="label">Balance</span><span class="value" id="summary-balance">Due at Session</span></div>
   </div>
 
   <section class="methods">
@@ -346,7 +347,7 @@
     </div>
 
     <div class="confirm-row">
-      <a href="mailto:rebloomspaja@gmail.com?subject=Deposit%20Sent%20-%20Booking%20Confirmation" class="btn-primary">I've Sent My Deposit</a>
+      <a href="mailto:rebloomspaja@gmail.com?subject=Deposit%20Sent%20-%20Booking%20Confirmation" id="confirm-email-link" class="btn-primary">I've Sent My Deposit</a>
       <p>This opens an email to confirm your payment with us directly.</p>
     </div>
   </section>
@@ -385,7 +386,36 @@
   </div>
 </footer>
 
+<script src="promo.js"></script>
 <script>
+  const params = new URLSearchParams(window.location.search);
+  const treatment = params.get('treatment');
+  const deposit = params.get('deposit');
+  const name = params.get('name');
+  const date = params.get('date');
+  const time = params.get('time');
+
+  if (treatment && deposit) {
+    document.getElementById('summary-treatment').textContent = treatment + (date && time ? ' — ' + date + ', ' + time : '');
+    document.getElementById('summary-deposit').textContent = formatJMD(Number(deposit));
+    document.getElementById('summary-name').textContent = name || 'Your Full Name';
+  } else {
+    // page opened directly, without coming from the booking form
+    document.getElementById('summary-treatment').textContent = 'Not selected yet';
+    document.getElementById('summary-deposit').textContent = '50% of treatment price';
+  }
+
+  if (treatment && deposit) {
+    const body = 'Name: ' + (name || '') +
+      '\nTreatment: ' + treatment +
+      '\nDate & Time: ' + date + ', ' + time +
+      '\nDeposit sent: ' + formatJMD(Number(deposit));
+    const link = document.getElementById('confirm-email-link');
+    link.href = 'mailto:rebloomspaja@gmail.com?subject=' +
+      encodeURIComponent('Deposit Sent - Booking Confirmation (' + name + ')') +
+      '&body=' + encodeURIComponent(body);
+  }
+
   const menuToggle = document.querySelector('.menu-toggle');
   const mobileMenu = document.getElementById('mobile-menu');
   menuToggle.addEventListener('click', () => {

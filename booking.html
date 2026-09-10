@@ -8,16 +8,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --cream: #EFE5CE;
-    --cream-deep: #E3D3AE;
-    --sage: #6B7549;
-    --sage-dark: #3A3C22;
-    --terracotta: #A3552B;
-    --terracotta-light: #C98A4B;
-    --plum: #6E4459;
-    --ink: #2B2115;
-    --ink-soft: #5E4E3B;
-    --line: rgba(43,33,21,0.16);
+    --cream: #FBEDD9;
+    --cream-deep: #F1D9AC;
+    --sage: #9C6C88;
+    --sage-dark: #6E3B5E;
+    --terracotta: #E8A33D;
+    --terracotta-light: #F0BD6E;
+    --plum: #4A1F3D;
+    --ink: #3B2412;
+    --ink-soft: #6B4B28;
+    --line: rgba(59,36,18,0.16);
   }
 
   *{ box-sizing: border-box; margin:0; padding:0; }
@@ -144,6 +144,19 @@
     max-width: 56ch;
   }
   .note-box strong{ color: var(--sage-dark); }
+
+  .promo-banner{
+    background: var(--cream-deep);
+    border-left: 2px solid var(--terracotta);
+    padding: 0.9rem 1.3rem;
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+    max-width: 56ch;
+    margin-top: 1rem;
+  }
+  .promo-banner strong{ color: var(--terracotta); }
+
+  #treatment option{ color: var(--ink); }
 
   /* ---------- FORM LAYOUT ---------- */
   .form-wrap{ padding: 1rem 6vw 6rem; }
@@ -323,6 +336,9 @@
     <div class="note-box" style="margin-top:1.6rem;">
       <strong>Currently open by appointment on Sundays only</strong>, 10am – 5pm. Bookings — and deposits — must be made at least one week in advance. No same-day bookings.
     </div>
+    <div class="promo-banner" id="booking-promo-banner" style="display:none;">
+      <strong>Launch offer:</strong> 10% off is already applied to the price shown below.
+    </div>
   </section>
 
   <div class="form-wrap">
@@ -337,9 +353,9 @@
           <label for="treatment">Treatment</label>
           <select id="treatment" name="treatment" required>
             <option value="" disabled selected>Select a treatment</option>
-            <option value="swedish">Swedish Renewal — $10,000</option>
-            <option value="deep-tissue">Deep Tissue Reset — $12,000</option>
-            <option value="aromatherapy">Aromatherapy — $11,000</option>
+            <option value="swedish" data-label="Swedish Renewal" data-price="10000">Swedish Renewal</option>
+            <option value="deep-tissue" data-label="Deep Tissue Reset" data-price="12000">Deep Tissue Reset</option>
+            <option value="aromatherapy" data-label="Aromatherapy" data-price="11000">Aromatherapy</option>
           </select>
         </div>
 
@@ -420,7 +436,7 @@
         </div>
 
         <div class="submit-row">
-          <a href="payment.html" class="btn-primary">Continue to Payment</a>
+          <button type="submit" class="btn-primary">Continue to Payment</button>
           <p>You'll choose how to pay your deposit on the next page.</p>
         </div>
       </div>
@@ -462,11 +478,17 @@
   </div>
 </footer>
 
+<script src="promo.js"></script>
+<script src="taken-slots.js"></script>
 <script>
   // populate Sunday-only date select, minimum 7 days out
   const dateSelect = document.getElementById('date');
+  const timeSelect = document.getElementById('time');
+  const treatmentSelect = document.getElementById('treatment');
+  const promoBanner = document.getElementById('booking-promo-banner');
   const MIN_DAYS_OUT = 7;
   const WEEKS_TO_SHOW = 10;
+  const ALL_TIMES = ['10:00 AM', '11:30 AM', '1:00 PM', '2:30 PM', '4:00 PM'];
 
   let earliest = new Date();
   earliest.setHours(0,0,0,0);
@@ -479,14 +501,82 @@
 
   const fmt = new Intl.DateTimeFormat('en-JM', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 
+  // a Sunday counts as fully booked once every listed time is taken
+  function isDateFull(dateValue) {
+    return ALL_TIMES.every(t => TAKEN_SLOTS.includes(dateValue + '|' + t));
+  }
+
   for (let i = 0; i < WEEKS_TO_SHOW; i++) {
     const d = new Date(firstSunday);
     d.setDate(d.getDate() + (i * 7));
+    const value = d.toISOString().slice(0,10);
     const opt = document.createElement('option');
-    opt.value = d.toISOString().slice(0,10);
-    opt.textContent = fmt.format(d);
+    opt.value = value;
+    opt.textContent = fmt.format(d) + (isDateFull(value) ? ' — Fully booked' : '');
+    if (isDateFull(value)) opt.disabled = true;
     dateSelect.appendChild(opt);
   }
+
+  // rebuild the time list whenever the date changes, blocking taken slots
+  function rebuildTimeOptions() {
+    const dateValue = dateSelect.value;
+    timeSelect.innerHTML = '';
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.disabled = true;
+    placeholder.selected = true;
+    placeholder.textContent = 'Select a time';
+    timeSelect.appendChild(placeholder);
+
+    ALL_TIMES.forEach(t => {
+      const taken = dateValue && TAKEN_SLOTS.includes(dateValue + '|' + t);
+      const opt = document.createElement('option');
+      opt.value = t;
+      opt.textContent = taken ? t + ' — Booked' : t;
+      opt.disabled = taken;
+      timeSelect.appendChild(opt);
+    });
+  }
+  dateSelect.addEventListener('change', rebuildTimeOptions);
+  rebuildTimeOptions();
+
+  // show live, discount-aware pricing next to the treatment dropdown
+  function updateTreatmentLabels() {
+    Array.from(treatmentSelect.options).forEach(opt => {
+      if (!opt.dataset.price) return;
+      const price = Number(opt.dataset.price);
+      const shown = (typeof isLaunchDiscountActive === 'function' && isLaunchDiscountActive())
+        ? discountedPrice(price) : price;
+      opt.textContent = opt.dataset.label + ' — ' + formatJMD(shown);
+    });
+    if (promoBanner && typeof isLaunchDiscountActive === 'function') {
+      promoBanner.style.display = isLaunchDiscountActive() ? '' : 'none';
+    }
+  }
+  updateTreatmentLabels();
+
+  // carry the booking details to payment.html instead of losing them on navigation
+  document.getElementById('booking-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const form = e.target;
+    if (!form.reportValidity()) return;
+
+    const opt = treatmentSelect.selectedOptions[0];
+    const price = Number(opt.dataset.price);
+    const finalPrice = (typeof isLaunchDiscountActive === 'function' && isLaunchDiscountActive())
+      ? discountedPrice(price) : price;
+    const deposit = Math.round(finalPrice * 0.5);
+
+    const params = new URLSearchParams({
+      treatment: opt.dataset.label,
+      price: finalPrice,
+      deposit: deposit,
+      date: dateSelect.selectedOptions[0].textContent,
+      time: timeSelect.value,
+      name: document.getElementById('name').value
+    });
+    window.location.href = 'payment.html?' + params.toString();
+  });
 
   // mobile menu toggle
   const menuToggle = document.querySelector('.menu-toggle');
